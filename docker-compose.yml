@@ -1,0 +1,11 @@
+version: "3"
+services:
+        stepn-tracking:
+                build: .
+                image: heaty566/stepn-tracking:latest
+                environment:
+                    - TELEGRAM_BOT_TOKEN=
+                    - TELEGRAM_CHAT_ID=
+                    - BASE_PRICE=2
+                ports:
+                    - 4000:4000
