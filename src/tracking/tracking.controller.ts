@@ -31,7 +31,7 @@ export class TrackingController {
         } catch (error) {
             return 'wrong value';
         }
-
+        this.sendMessage(`Current Price Update ${this.basePrice}`);
         return `Current Price $${this.basePrice}`;
     }
 
@@ -47,16 +47,23 @@ export class TrackingController {
 
         console.log('run cron job');
         const page = await browser.newPage();
-        await page.goto('https://www.binance.com/en/price/gst');
-
-        const price = await page.$eval(`#__APP > div > main > section > div > div.css-871wnf > div.css-1wh66rn > div.css-1267ixm > div.css-12ujz79`, (el) => (el as HTMLSpanElement).innerText);
+        await page.goto('https://birdeye.so/token/AFbX8oGjGpmVFywbVouvhQSRmiW2aR1mohfahi4Y2AdB?fbclid=IwAR2Msk6ziTeYbP2_wBU4GKIQPDI2pDwCIpNjC9e8xob1gxPvqhwgac9wWeA');
+        await page.waitForSelector(
+            '#root > div > div.sc-faUpoM.yVtcP > div > div.sc-hmjpVf.kXoFgj > div.sc-eLwHnm.kzSJKe.side.left > div.ant-card.sc-gKclnd.sc-iCfMLu.gbwZcc.eehqFj.xs-none > div > div:nth-child(1) > div > div.sc-fHeRUh.hZCThT > div:nth-child(2) > span',
+        );
+        const price = await page.$eval(
+            `#root > div > div.sc-faUpoM.yVtcP > div > div.sc-hmjpVf.kXoFgj > div.sc-eLwHnm.kzSJKe.side.left > div.ant-card.sc-gKclnd.sc-iCfMLu.gbwZcc.eehqFj.xs-none > div > div:nth-child(1) > div > div.sc-fHeRUh.hZCThT > div:nth-child(2) > span`,
+            (el) => (el as HTMLSpanElement).innerText,
+        );
         if (price) {
             try {
-                if (Number(price.split(' ')[1]) >= this.basePrice) {
+                console.log(Number(price.split('$')[1]));
+                if (Number(price.split('$')[1]) >= this.basePrice) {
                     this.sendMessage(`Current Price $${Number(price.split(' ')[1])}`);
                 }
             } catch (error) {}
         }
+
         await browser.close();
     }
 }
